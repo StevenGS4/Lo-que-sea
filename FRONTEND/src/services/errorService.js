@@ -1,9 +1,14 @@
 import { callCrud } from './api';
 
-// Normalizamos las respuestas de tu bitácora
+// Normalizamos la bitácora
 function unwrap(res) {
   const rows = Array.isArray(res?.data) ? res.data.flat() : [];
-  return { ok: !!res?.success, rows, status: res?.status, message: res?.messageUSR };
+  return {
+    ok: !!res?.success,
+    rows,
+    status: res?.status,
+    message: res?.messageUSR,
+  };
 }
 
 export async function fetchErrors({ skip = 0, top = 100 } = {}) {
@@ -17,12 +22,13 @@ export async function fetchErrorById(id) {
 }
 
 export async function createError(error) {
-  const res = await callCrud('add', {}, { data: error });
+  // ✔ CORRECTO: El error va en el body
+  const res = await callCrud('add', { data: error });
   return unwrap(res);
 }
 
 export async function updateError(error) {
-  const res = await callCrud('update', {}, { data: error });
+  // ✔ CORRECTO: El error va en el body
+  const res = await callCrud('update', { data: error });
   return unwrap(res);
 }
-

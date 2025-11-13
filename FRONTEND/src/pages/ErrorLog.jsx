@@ -14,7 +14,6 @@ import {
   FlexBoxDirection,
 } from "@ui5/webcomponents-react";
 
-// 🔹 Importaciones necesarias de UI5 base
 import "@ui5/webcomponents/dist/Option.js";
 import "@ui5/webcomponents-icons/dist/search.js";
 import "@ui5/webcomponents-icons/dist/refresh.js";
@@ -27,7 +26,6 @@ const ErrorLog = () => {
   const [lastUpdate, setLastUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Cargar errores desde el backend CAP
   const loadErrors = async () => {
     try {
       setLoading(true);
@@ -35,8 +33,6 @@ const ErrorLog = () => {
       if (ok && Array.isArray(rows)) {
         setErrors(rows);
         setLastUpdate(new Date().toLocaleTimeString());
-      } else {
-        console.warn("⚠️ No se pudieron cargar los errores");
       }
     } catch (err) {
       console.error("❌ Error al cargar errores:", err);
@@ -45,35 +41,12 @@ const ErrorLog = () => {
     }
   };
 
-  // 🔹 Cargar al iniciar y refrescar cada 10 segundos
   useEffect(() => {
     loadErrors();
     const interval = setInterval(loadErrors, 10000);
     return () => clearInterval(interval);
   }, []);
 
-  // 🔹 Crear error simulado
-  const handleCreateError = async () => {
-    const nuevo = {
-      ERRORMESSAGE: "Error simulado desde frontend",
-      ERRORCODE: "ERR-FRONT",
-      ERRORSOURCE: "ReactUI",
-      SEVERITY: "ERROR",
-      MODULE: "Interfaz",
-      APPLICATION: "ErrorManager",
-      USER: "Admin",
-    };
-
-    const { ok, rows, message } = await createError(nuevo);
-    if (ok) {
-      alert("✅ Error creado exitosamente");
-      setErrors((prev) => [rows[0], ...prev]);
-    } else {
-      alert(`❌ Falló al crear el error: ${message}`);
-    }
-  };
-
-  // 🔹 Filtro dinámico
   const filteredErrors = errors
     .filter((e) =>
       e.ERRORMESSAGE?.toLowerCase().includes(search.toLowerCase())
@@ -87,6 +60,38 @@ const ErrorLog = () => {
       return true;
     });
 
+  // 🔥 1) SEPARAMOS POR PRIORIDAD (NO IMPORTA EL MES)
+  const newErrors = filteredErrors
+    .filter((e) => e.STATUS === "NEW" || e.STATUS === "IN_PROGRESS")
+    .sort(
+      (a, b) => new Date(a.ERRORDATETIME) - new Date(b.ERRORDATETIME)
+    );
+
+  const ignoredErrors = filteredErrors.filter((e) => e.STATUS === "IGNORED");
+  const resolvedErrors = filteredErrors.filter((e) => e.STATUS === "RESOLVED");
+
+  // 🔥 2) AGRUPAMOS SOLO LOS QUE NO SON NEW
+  const groupByMonth = (list) =>
+    list.reduce((acc, error) => {
+      const date = new Date(error.ERRORDATETIME);
+      const monthKey = date.toLocaleString("es-MX", {
+        month: "long",
+        year: "numeric",
+      });
+
+      if (!acc[monthKey]) acc[monthKey] = [];
+      acc[monthKey].push(error);
+
+      // ordenar antiguedad
+      acc[monthKey].sort(
+        (a, b) => new Date(a.ERRORDATETIME) - new Date(b.ERRORDATETIME)
+      );
+      return acc;
+    }, {});
+
+  const ignoredByMonth = groupByMonth(ignoredErrors);
+  const resolvedByMonth = groupByMonth(resolvedErrors);
+
   return (
     <div
       style={{
@@ -95,14 +100,11 @@ const ErrorLog = () => {
         minHeight: "100vh",
       }}
     >
-      {/* 🔹 Título principal */}
       <Title level="H2">Error Log</Title>
 
-      {/* 🔹 Barra superior con filtros y acciones */}
       <Toolbar style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-        {/* Campo de búsqueda */}
         <Input
-          placeholder="Buscar por mensaje, código o fuente..."
+          placeholder="Buscar..."
           value={search}
           onInput={(e) => setSearch(e.target.value)}
           icon="search"
@@ -110,16 +112,13 @@ const ErrorLog = () => {
           style={{ width: "300px" }}
         />
 
-        {/* Selector de filtros */}
         <Select
           onChange={(e) =>
             setFilter(e.detail.selectedOption.value.toUpperCase())
           }
           style={{ width: "180px", marginLeft: "1rem" }}
         >
-          <ui5-option value="ALL" selected>
-            Todos
-          </ui5-option>
+          <ui5-option value="ALL" selected>Todos</ui5-option>
           <ui5-option value="RESOLVED">Resueltos</ui5-option>
           <ui5-option value="UNRESOLVED">Pendientes</ui5-option>
           <ui5-option value="IGNORED">Ignorados</ui5-option>
@@ -127,7 +126,6 @@ const ErrorLog = () => {
 
         <ToolbarSpacer />
 
-        {/* Botón de refresco */}
         <Button
           icon="refresh"
           design="Transparent"
@@ -136,37 +134,50 @@ const ErrorLog = () => {
         >
           {loading ? "Cargando..." : "Refrescar"}
         </Button>
-
       </Toolbar>
 
-      {/* 🔹 Estado de carga */}
+      {/* LOADING */}
       {loading && (
         <FlexBox
           direction={FlexBoxDirection.Column}
-          style={{
-            alignItems: "center",
-            marginTop: "2rem",
-            marginBottom: "2rem",
-          }}
+          style={{ alignItems: "center", margin: "2rem 0" }}
         >
           <BusyIndicator active size="Large" />
           <Text>Cargando errores...</Text>
         </FlexBox>
       )}
 
-      {/* 🔹 Lista de errores */}
-      <div style={{ marginTop: "1rem" }}>
-        {!loading && filteredErrors.length === 0 ? (
-          <Text>No se encontraron errores.</Text>
-        ) : (
-          filteredErrors.map((err) => (
-            <ErrorCard key={err.ERRORID || err._id} error={err} />
-          ))
-        )}
-      </div>
+      {/* MOSTRAR NEW SIEMPRE ARRIBA */}
+      {newErrors.length > 0 && (
+        <div style={{ marginBottom: "2rem" }}>
+          <Title level="H4">🆕 PENDIENTES</Title>
+          {newErrors.map((err) => (
+            <ErrorCard key={err._id} error={err} />
+          ))}
+        </div>
+      )}
 
-      {/* 🔹 Última actualización */}
-      <Text style={{ display: "block", marginTop: "1.5rem", color: "#555" }}>
+      {/* IGNORED POR MES */}
+      {Object.entries(ignoredByMonth).map(([month, list]) => (
+        <div key={"ignored-" + month} style={{ marginBottom: "2rem" }}>
+          <Title level="H4">📅 {month.toUpperCase()} — IGNORADOS</Title>
+          {list.map((err) => (
+            <ErrorCard key={err._id} error={err} />
+          ))}
+        </div>
+      ))}
+
+      {/* RESOLVED POR MES */}
+      {Object.entries(resolvedByMonth).map(([month, list]) => (
+        <div key={"resolved-" + month} style={{ marginBottom: "2rem" }}>
+          <Title level="H4">📅 {month.toUpperCase()} — RESUELTOS</Title>
+          {list.map((err) => (
+            <ErrorCard key={err._id} error={err} />
+          ))}
+        </div>
+      ))}
+
+      <Text style={{ marginTop: "1.5rem", color: "#555" }}>
         Última actualización: {lastUpdate || "Nunca"}
       </Text>
     </div>
