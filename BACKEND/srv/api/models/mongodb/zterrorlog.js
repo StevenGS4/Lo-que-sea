@@ -1,8 +1,45 @@
 // srv/api/models/zterrorlog-model.js
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const zterrorlogSchema = new mongoose.Schema(
   {
+    //NUEVOS CAMPOS
+    ERRORID: {
+      type: Integer,
+      required: true,
+    },
+    CANSEEUSERS: {
+      type: [String],
+      required: true,
+    },
+    ASIGNEDUSERS: {
+      type: [String],
+    },
+    RESOLVEDBY: {
+      type: String,
+    },
+    COMMENTS: {
+      type: [Object],
+    },
+    FINALSOLUTION: {
+      type: String,
+    },
+    //=============
+
+    //CAMPO A MODIFICAR
+    CONTEXT: {
+      type: [
+        {
+          stack: { type: String },
+          endponint: String,
+          requestBody: Object,
+          browser: String,
+          
+        },
+      ],
+      default: {},
+    },
+    //----------------
     ERRORMESSAGE: {
       type: String,
       required: true,
@@ -37,17 +74,13 @@ const zterrorlogSchema = new mongoose.Schema(
     },
     STATUS: {
       type: String,
-      enum: ['NEW', 'IN_PROGRESS', 'RESOLVED', 'IGNORED'],
-      default: 'NEW',
-    },
-    CONTEXT: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {},
+      enum: ["NEW", "IN_PROGRESS", "RESOLVED", "IGNORED"],
+      default: "NEW",
     },
     SEVERITY: {
       type: String,
-      enum: ['INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-      default: 'ERROR',
+      enum: ["INFO", "WARNING", "ERROR", "CRITICAL"],
+      default: "ERROR",
     },
     MODULE: {
       type: String,
@@ -61,19 +94,19 @@ const zterrorlogSchema = new mongoose.Schema(
       maxlength: 500,
       trim: true,
     },
-    USER: {
+    GENERATEDBY: {
+      //ID DEL USUARIO
       type: String,
       default: null,
       maxlength: 255,
       trim: true,
     },
-
     // ⚙️ Campos adicionales sugeridos para próximas versiones
-    PAGE: {
-      type: String,
-      default: null, // Página de la app donde surgió el error
-      maxlength: 500,
-    },
+    // PAGE: {
+    //   type: String,
+    //   default: null, // Página de la app donde surgió el error
+    //   maxlength: 500,
+    // },
     PROCESS: {
       type: String,
       default: null, // Proceso o flujo donde ocurrió el error
@@ -81,15 +114,15 @@ const zterrorlogSchema = new mongoose.Schema(
     },
     ENVIRONMENT: {
       type: String,
-      enum: ['DEV', 'TEST', 'PROD'],
-      default: 'DEV',
+      enum: ["DEV", "TEST", "PROD"],
+      default: "DEV",
     },
     DEVICE: {
       type: String,
       default: null, // Ejemplo: 'Desktop', 'Mobile', 'Tablet'
     },
   },
-  { collection: 'ZTERRORLOG' }
+  { collection: "ZTERRORLOG" }
 );
 
-export default mongoose.model('ZTERRORLOG', zterrorlogSchema);
+export default mongoose.model("ZTERRORLOG", zterrorlogSchema);
