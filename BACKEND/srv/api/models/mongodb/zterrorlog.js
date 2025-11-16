@@ -94,7 +94,7 @@ const zterrorlogSchema = new mongoose.Schema(
       maxlength: 500,
       trim: true,
     },
-    GENERATEDBY: {
+    CREATED_BY_APP: {
       //ID DEL USUARIO
       type: String,
       default: null,
