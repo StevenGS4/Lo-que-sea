@@ -3,30 +3,34 @@ import { Link } from "react-router-dom";
 import {
   Card,
   CardHeader,
-  Avatar,
   ObjectStatus,
   Text,
   FlexBox,
   FlexBoxDirection,
 } from "@ui5/webcomponents-react";
+
 import "@ui5/webcomponents-icons/dist/employee.js";
 
 const ErrorCard = ({ error }) => {
+
   const fecha = error.ERRORDATETIME
     ? new Date(error.ERRORDATETIME).toLocaleString("es-MX", {
-      dateStyle: "short",
-      timeStyle: "medium",
-    })
+        dateStyle: "short",
+        timeStyle: "medium",
+      })
     : "Fecha desconocida";
 
   const statusState =
     error.STATUS === "RESOLVED"
       ? "Success"
       : error.STATUS === "IGNORED"
-        ? "Warning"
-        : "Error";
+      ? "Warning"
+      : "Error";
 
   const to = `/errors/${error._id || error.ERRORID}`;
+
+  // 🔥 NUEVO VALOR: nombre del usuario que generó el error
+  const user = error.CREATED_BY_APP || "Sin usuario";
 
   return (
     <div style={{ marginBottom: "1rem", position: "relative" }}>
@@ -48,16 +52,16 @@ const ErrorCard = ({ error }) => {
           </div>
 
           <CardHeader
-            titleText={`${error.ERRORCODE || "Sin código"} — ${error.ERRORSOURCE || "Origen desconocido"
-              }`}
-            subtitleText={`${error.USER || "Sin usuario"} — ${fecha}`}
+            titleText={`${error.ERRORCODE || "Sin código"} — ${
+              error.ERRORSOURCE || "Origen desconocido"
+            }`}
+            subtitleText={`${user} — ${fecha}`}
             avatar={
               <img
-                src={`https://i.pravatar.cc/50?u=${error.USER || error._id || error.ERRORCODE || "default"}`}
-                alt={error.USER || "Usuario"}
+                src={`https://i.pravatar.cc/50?u=${user}`}
+                alt={user}
                 className="error-avatar"
               />
-
             }
           />
 

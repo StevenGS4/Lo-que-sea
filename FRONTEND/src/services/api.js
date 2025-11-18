@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3333/odata/v4/api/error/crud";
+const BASE_URL = "http://localhost:3334/odata/v4/api/error/crud";
 
 // Helper genérico
 export async function callCrud(queryType, body = {}, extraParams = {}) {

@@ -32,3 +32,8 @@ export async function updateError(error) {
   const res = await callCrud('update', { data: error });
   return unwrap(res);
 }
+
+export async function fetchAISolution(id) {
+  const res = await fetch(`http://localhost:3334/api/error/ai-suggestion/${id}`);
+  return await res.json();
+}
