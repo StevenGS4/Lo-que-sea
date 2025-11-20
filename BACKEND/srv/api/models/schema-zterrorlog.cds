@@ -32,6 +32,8 @@ entity zterrorlog : cuid, managed {
 
   STATUS        : Status default 'NEW';
   SEVERITY      : Severity;
+  TYPE_ERROR    : String(40);
+
 
   CONTEXT       : LargeString;
 

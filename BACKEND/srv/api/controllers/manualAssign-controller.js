@@ -16,6 +16,7 @@ export async function manualAssignController(req, res) {
 
     // Asignación manual: SOLO ASIGNEDUSERS
     error.ASIGNEDUSERS = [assignedUser];
+    error.STATUS = "IN_PROGRESS";   
 
     await error.save();
 

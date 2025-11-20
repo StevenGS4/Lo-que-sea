@@ -73,7 +73,7 @@ export default async function startServer(o = {}) {
     console.log('✅ CAP activo');
 
     // ⭐ CRON (ejecuta auto-assign cada 5 minutos)
-    const THREE_MINUTES = 2 * 60 * 1000;
+    const THREE_MINUTES = 3 * 60 * 1000;
     setInterval(async () => {
       try {
         const result = await runAutoAssign();

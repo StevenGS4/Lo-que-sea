@@ -8,7 +8,7 @@ const zterrorlogSchema = new mongoose.Schema(
     // ======================================================
     ERRORID: {
       type: Number,
-      default: () => Date.now(), 
+      default: () => Date.now(),
     },
 
     CANSEEUSERS: {
@@ -45,6 +45,7 @@ const zterrorlogSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+
 
     // ======================================================
     // 🔧 CONTEXT — actualizado para coincidir con los nuevos datos
@@ -118,6 +119,36 @@ const zterrorlogSchema = new mongoose.Schema(
       type: String,
       enum: ["INFO", "WARNING", "ERROR", "CRITICAL"],
       default: "ERROR",
+    },
+
+    TYPE_ERROR: { //NUEVO
+      type: String,
+      enum: [
+        "ALERT",
+        "WARNING",
+        "INFO",
+        "SERVIDOR",
+        "DATABASE",
+        "INFRAESTRUCTURA",
+        "EXTERNO",
+        "FRONTEND",
+        "UI",
+        "COMPATIBILIDAD",
+        "LOGICO",
+        "HUMANO",
+        "VALIDACION",
+        "NEGOCIO",
+        "PROCESO",
+        "INTEGRACION",
+        "SEGURIDAD",
+        "AUTH",
+        "FRAUDE",
+        "PRODUCCION",
+        "QA",
+        "SANDBOX",
+        "OTRO"
+      ],
+      default: "ALERT",
     },
 
     MODULE: {
