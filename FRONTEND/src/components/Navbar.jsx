@@ -84,7 +84,7 @@ export default function Navbar() {
             {user.USERNAME || "Usuario"} ({user.USERID || "?"})
           </StandardListItem>
 
-          <StandardListItem icon="settings" onClick={() => alert("Config…")}>
+          <StandardListItem icon="settings" onClick={() => (window.location.href = "/config")}>
             Configuración
           </StandardListItem>
 

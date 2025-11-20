@@ -16,6 +16,7 @@ import ErrorLog from "./pages/ErrorLog.jsx";
 import ErrorDetail from "./pages/ErrorDetail.jsx";
 import TestErrorPage from "./pages/TestErrorPage.jsx";
 import ErrorLogin from "./pages/ErrorLogin.jsx";
+import ConfigPage from "./pages/ConfigPage.jsx";
 
 import NotificationToast from "./components/NotificationToast";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -68,6 +69,7 @@ function App() {
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/errors" element={<ErrorLog />} />
                           <Route path="/errors/:id" element={<ErrorDetail />} />
+                          <Route path="/config" element={<ConfigPage />} />
                         </Routes>
                       </div>
 
