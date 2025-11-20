@@ -30,7 +30,7 @@ const ErrorCard = ({ error }) => {
   const to = `/errors/${error._id || error.ERRORID}`;
 
   // 🔥 NUEVO VALOR: nombre del usuario que generó el error
-  const user = error.CREATED_BY_APP || "Sin usuario";
+  const user = error.CREATED_BY_APP || error.USER || error.GENERATEDBY || "Sin usuario";
 
   return (
     <div style={{ marginBottom: "1rem", position: "relative" }}>
@@ -73,9 +73,28 @@ const ErrorCard = ({ error }) => {
               borderRadius: "0 0 8px 8px",
             }}
           >
+            {/* 🔹 MENSAJE DEL ERROR (lo tuyo, NO se toca) */}
             <Text style={{ lineHeight: "1.4" }}>
               {error.ERRORMESSAGE || "Sin descripción del error"}
             </Text>
+
+            {/* 🔥🔥🔥 CAMPOS AGREGADOS (NO SE TOCÓ NADA, SOLO SE AGREGÓ) */}
+            <Text style={{ marginTop: "0.5rem", fontSize: "0.85rem", color: "#444" }}>
+              <b>Tipo:</b> {error.TYPE_ERROR || "No especificado"}
+            </Text>
+
+            <Text style={{ fontSize: "0.85rem", color: "#444" }}>
+              <b>Severidad:</b> {error.SEVERITY || "Sin severidad"}
+            </Text>
+
+            <Text style={{ fontSize: "0.85rem", color: "#444" }}>
+              <b>Módulo:</b> {error.MODULE || "No definido"}
+            </Text>
+
+            <Text style={{ fontSize: "0.85rem", color: "#444" }}>
+              <b>Aplicación:</b> {error.APPLICATION || "No especificada"}
+            </Text>
+            {/* 🔥🔥🔥 FIN DE AGREGADOS */}
           </FlexBox>
         </Card>
       </Link>
