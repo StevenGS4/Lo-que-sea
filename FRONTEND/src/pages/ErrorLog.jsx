@@ -499,7 +499,7 @@ const ErrorLog = () => {
       {Object.entries(ignoredByMonth).map(([month, list]) => (
         <div key={"ignored-" + month} style={{ marginBottom: "2rem" }}>
           <Title level="H4">📅 {month.toUpperCase()} — IGNORADOS</Title>
-         {list
+          {list
             .filter((err) => err.CANSEEUSERS.includes(loggedUser.USERID))
             .map((err) => (
               <ErrorCard key={err._id || err.ERRORID} error={err} />
@@ -511,9 +511,14 @@ const ErrorLog = () => {
       {Object.entries(resolvedByMonth).map(([month, list]) => (
         <div key={"resolved-" + month} style={{ marginBottom: "2rem" }}>
           <Title level="H4">📅 {month.toUpperCase()} — RESUELTOS</Title>
-          {list.map((err) => (
+          {/* {list.map((err) => (
             <ErrorCard key={err._id || err.ERRORID} error={err} />
-          ))}
+          ))} */}
+          {list
+            .filter((err) => err.CANSEEUSERS.includes(loggedUser.USERID))
+            .map((err) => (
+              <ErrorCard key={err._id || err.ERRORID} error={err} />
+            ))}
         </div>
       ))}
 
